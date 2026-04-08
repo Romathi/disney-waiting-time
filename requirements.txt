@@ -1,0 +1,8 @@
+matplotlib
+mousetools
+pandas
+plotly
+requests
+ruff
+streamlit
+streamlit_autorefresh
