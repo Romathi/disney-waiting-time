@@ -3,7 +3,7 @@
 
 
 import sqlite3
-from datetime import datetime
+from datetime import UTC, datetime
 
 
 # -------------------------------------------------------------------
@@ -43,6 +43,7 @@ def init_db(db_name: str) -> None:
     conn.commit()
     conn.close()
 
+
 # -------------------------------------------------------------------
 # Database connection
 # -------------------------------------------------------------------
@@ -50,10 +51,12 @@ def get_db_connection(db_name: str) -> sqlite3.Connection:
     conn = sqlite3.connect(db_name)
     return conn
 
-def close_db_connection(conn: sqlite3.Connection, commit:bool= True) -> None:
+
+def close_db_connection(conn: sqlite3.Connection, commit: bool = True) -> None:
     if commit:
         conn.commit()
     conn.close()
+
 
 # -------------------------------------------------------------------
 # Insert data
@@ -69,7 +72,7 @@ def insert_data(cursor: sqlite3.Cursor, data_dict: dict[str, dict[str, str]], pa
     Returns:
         None
     """
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S")
     for name, values in data_dict.items():
         cursor.execute(
             """

@@ -24,6 +24,7 @@ def load_data():
     _df = pd.read_sql_query("SELECT * FROM wait_times", conn)
     conn.close()
     _df["timestamp"] = pd.to_datetime(_df["timestamp"])
+    _df["timestamp"] = _df["timestamp"].dt.tz_localize("UTC").dt.tz_convert("Europe/Paris")
     # On garde OPERATING pour les moyennes, mais on garde tout pour l'historique
     return _df
 
