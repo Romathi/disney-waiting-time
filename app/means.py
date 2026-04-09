@@ -61,6 +61,7 @@ def get_means(st, df: pd.DataFrame, open_attractions: pd.DataFrame) -> None:
     st.dataframe(styled_df, use_container_width=True, hide_index=True)
 
     st.info(
-        "💡 **Mean, Min, Max** are calculated only when the ride is OPERATING. "
-        "**Down Count** includes all recorded downtime (DOWN status)."
+        "💡 **Avg Wait, Min, Max** are calculated only when the ride is OPERATING. "
+        "**Availability** represents the percentage of time the ride was operating "
+        "(formula: `(uptime / (downtime + uptime)) * 100)`)."
     )
