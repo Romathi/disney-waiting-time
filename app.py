@@ -10,6 +10,7 @@ from streamlit_autorefresh import st_autorefresh
 from app.filters import get_filters
 from app.graphs import get_graphs
 from app.key_numbers import get_key_numbers
+from app.best_per_slot import get_detailed_best_picks
 from app.means import get_means
 
 # Actualise toutes les 5 minutes (300 000 millisecondes)
@@ -47,6 +48,10 @@ try:
 
     # --- SECTION 3: TENDENCY GRAPHS ---
     get_graphs(st, filtered_df)
+
+    st.divider()
+
+    get_detailed_best_picks(st, open_attractions)
 
     st.divider()
 
