@@ -87,7 +87,6 @@ def insert_data(cursor: sqlite3.Cursor, data_dict: dict[str, dict[str, str]]) ->
                 values.get("status"),
                 values.get("last_up"),
                 values.get("park_id"),
-                values.get("park_id"),
             ),
         )
 
