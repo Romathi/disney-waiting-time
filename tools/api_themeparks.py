@@ -19,19 +19,21 @@ def collect():
         data = r.json()
 
         for attraction in data.get("liveData", []):
-            name = attraction.get("name")
-            status = attraction.get("status")
-            queue = attraction.get("queue")
             last_up = attraction.get("lastUpdated")
+            name = attraction.get("name")
+            park_id = attraction.get("parkId")
+            queue = attraction.get("queue")
+            status = attraction.get("status")
 
             wait = None
             if queue and "STANDBY" in queue:
                 wait = queue["STANDBY"].get("waitTime")
 
             attraction_datas[name] = {
-                "wait_time": wait,
-                "status": status,
                 "last_up": last_up,
+                "park_id": park_id,
+                "status": status,
+                "wait_time": wait,
             }
 
     except Exception as e:

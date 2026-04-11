@@ -7,11 +7,13 @@ import pandas as pd
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
+from app.best_per_slot import get_detailed_best_picks
+from app.favorites import manage_favorites_ui
 from app.filters import get_filters
 from app.graphs import get_graphs
 from app.key_numbers import get_key_numbers
-from app.best_per_slot import get_detailed_best_picks
 from app.means import get_means
+from main import DB_NAME
 
 # Actualise toutes les 5 minutes (300 000 millisecondes)
 st_autorefresh(interval=300000, key="datarefresh")
@@ -21,7 +23,7 @@ st.set_page_config(page_title="Disney Analytics", layout="wide")
 
 
 def load_data():
-    conn = sqlite3.connect("disney_data.db")
+    conn = sqlite3.connect(DB_NAME)
     _df = pd.read_sql_query("SELECT * FROM wait_times", conn)
     conn.close()
     _df["timestamp"] = pd.to_datetime(_df["timestamp"])
@@ -31,29 +33,55 @@ def load_data():
 
 
 st.title("🎢 Disneyland Paris - Optimization Dashboard")
-
 try:
+    # 1. Chargement initial
     df = load_data()
 
-    # Set the filters in the left sidebar.
+    # 2. Application des filtres de base (Parc, etc.)
     selected_park, filtered_df = get_filters(st, df)
 
+    # 3. Gestion des favoris (Checkboxes + Toggle)
+    # IMPORTANT : Ta fonction manage_favorites_ui doit utiliser la clé "show_only_favs"
+    # pour son st.sidebar.toggle(..., key="show_only_favs")
+    show_only = manage_favorites_ui(st, df, DB_NAME)
+
+    # 4. Définition des attractions ouvertes MAINTENANT
+    open_attractions = filtered_df[
+        (filtered_df["status"] == "OPERATING")
+        & (filtered_df["wait_time"].notna())  # Pas de NULL
+        & (filtered_df["wait_time"] > 0)  # Pas de 0 si tu considères que c'est une erreur
+    ]
+
+    # 5. LE FILTRE FINAL (Correction de la logique)
+    # On utilise directement show_only qui est renvoyé par ton composant
+    if show_only:
+        has_favs = not filtered_df[filtered_df["is_favorite"] == 1].empty
+        if has_favs:
+            # On réassigne les deux variables pour tout le reste du script
+            filtered_df = filtered_df[filtered_df["is_favorite"] == 1].copy()
+            open_attractions = open_attractions[open_attractions["is_favorite"] == 1].copy()
+        else:
+            st.sidebar.warning("No favorites selected!")
+
     # --- SECTION 1: KEY NUMBERS ---
-    open_attractions = df[(df["status"] == "OPERATING") & (df["wait_time"].notna())]
+    # Ici, filtered_df et open_attractions sont déjà potentiellement filtrés
     get_key_numbers(st, filtered_df, open_attractions)
 
     # --- SECTION 2: MEANS ---
     get_means(st, filtered_df, open_attractions)
+
     st.divider()
 
     # --- SECTION 3: TENDENCY GRAPHS ---
+    # Le graphique n'affichera que les favoris si show_only est actif
     get_graphs(st, filtered_df)
 
     st.divider()
 
+    # --- SECTION 4: OPTIMIZATION ---
+    # Le Top 10 ne montrera que les favoris si show_only est actif
     get_detailed_best_picks(st, open_attractions)
 
-    st.divider()
 
     st.warning(
         "⚠️ The data is updated every 5 minutes. "

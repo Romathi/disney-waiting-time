@@ -3,6 +3,7 @@
 
 import pandas as pd
 
+
 def get_means(st, df: pd.DataFrame, open_attractions: pd.DataFrame) -> None:
     st.subheader("📊 Reliability & Statistics")
 
@@ -33,9 +34,7 @@ def get_means(st, df: pd.DataFrame, open_attractions: pd.DataFrame) -> None:
     final_df = pd.merge(time_stats, stats, on="attraction_name", how="left")
 
     # Sélection des colonnes utiles pour l'utilisateur
-    display_df = final_df[
-        ["attraction_name", "Avg_Wait", "Min", "Max", "Availability %"]
-    ].copy()
+    display_df = final_df[["attraction_name", "Avg_Wait", "Min", "Max", "Availability %"]].copy()
 
     # Renommer pour un affichage propre
     display_df.columns = [

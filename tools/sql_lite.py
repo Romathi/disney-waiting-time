@@ -76,8 +76,8 @@ def insert_data(cursor: sqlite3.Cursor, data_dict: dict[str, dict[str, str]], pa
     for name, values in data_dict.items():
         cursor.execute(
             """
-            INSERT INTO wait_times (timestamp, park_name, attraction_name, wait_time, status, last_updated_at)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO wait_times (timestamp, park_name, attraction_name, wait_time, status, last_updated_at, park_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 now,
@@ -86,5 +86,19 @@ def insert_data(cursor: sqlite3.Cursor, data_dict: dict[str, dict[str, str]], pa
                 values.get("wait_time"),
                 values.get("status"),
                 values.get("last_up"),
+                values.get("park_id"),
             ),
         )
+
+
+# -------------------------------------------------------------------
+# Update data
+# -------------------------------------------------------------------
+def toggle_favorite(db_name: str, attraction_name: str, status: bool):
+    conn = get_db_connection(db_name)
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE wait_times SET is_favorite = ? WHERE attraction_name = ?", (1 if status else 0, attraction_name)
+    )
+    conn.commit()
+    conn.close()
