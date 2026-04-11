@@ -9,6 +9,11 @@ import requests
 # --- CONFIGURATION ---
 PARK_ID = "e8d0207f-da8a-4048-bec8-117aa946b2c2"
 
+PARK_NAMES = {
+    "ca888437-ebb4-4d50-aed2-d227f7096968": "Walt Disney Studio",
+    "dae968d5-630d-4719-8b06-3d107e944401": "Disneyland Park",
+}
+
 
 def collect():
     url = f"https://api.themeparks.wiki/v1/entity/{PARK_ID}/live"
@@ -22,6 +27,7 @@ def collect():
             last_up = attraction.get("lastUpdated")
             name = attraction.get("name")
             park_id = attraction.get("parkId")
+            park_name = PARK_NAMES.get(park_id, "Unknown")
             queue = attraction.get("queue")
             status = attraction.get("status")
 
@@ -32,6 +38,7 @@ def collect():
             attraction_datas[name] = {
                 "last_up": last_up,
                 "park_id": park_id,
+                "park_name": park_name,
                 "status": status,
                 "wait_time": wait,
             }

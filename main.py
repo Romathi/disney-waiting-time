@@ -28,7 +28,7 @@ def main():
         attractions = collect()
         conn = get_db_connection(DB_NAME)
         cursor = conn.cursor()
-        insert_data(cursor, attractions, PARK_NAME)
+        insert_data(cursor, attractions)
         close_db_connection(conn)
     except Exception as e:
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

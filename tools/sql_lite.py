@@ -61,7 +61,7 @@ def close_db_connection(conn: sqlite3.Connection, commit: bool = True) -> None:
 # -------------------------------------------------------------------
 # Insert data
 # -------------------------------------------------------------------
-def insert_data(cursor: sqlite3.Cursor, data_dict: dict[str, dict[str, str]], park_name: str) -> None:
+def insert_data(cursor: sqlite3.Cursor, data_dict: dict[str, dict[str, str]]) -> None:
     """Insert data into the database.
 
     Args:
@@ -81,11 +81,12 @@ def insert_data(cursor: sqlite3.Cursor, data_dict: dict[str, dict[str, str]], pa
             """,
             (
                 now,
-                park_name,
+                values.get("park_name"),
                 name,
                 values.get("wait_time"),
                 values.get("status"),
                 values.get("last_up"),
+                values.get("park_id"),
                 values.get("park_id"),
             ),
         )
