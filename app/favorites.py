@@ -1,3 +1,6 @@
+# MIT License
+# Copyright (c) 2026 Romathi
+
 from tools.sql_lite import toggle_favorite
 
 

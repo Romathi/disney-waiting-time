@@ -1,7 +1,6 @@
 # MIT License
 # Copyright (c) 2026 Romathi
 
-
 import sqlite3
 from datetime import UTC, datetime
 
@@ -24,7 +23,7 @@ def init_db(db_name: str) -> None:
     Args:
         db_name (str): The name of the database to initialize.
 
-    Return:
+    Returns:
         None
     """
     conn = sqlite3.connect(db_name)
@@ -48,11 +47,28 @@ def init_db(db_name: str) -> None:
 # Database connection
 # -------------------------------------------------------------------
 def get_db_connection(db_name: str) -> sqlite3.Connection:
+    """Get a connection to the database.
+
+    Args:
+        db_name (str): The name of the
+
+    Returns:
+        sqlite3.Connection: A connection to the database.
+    """
     conn = sqlite3.connect(db_name)
     return conn
 
 
 def close_db_connection(conn: sqlite3.Connection, commit: bool = True) -> None:
+    """Close the database connection.
+
+    Args:
+        conn (sqlite3.Connection): The connection to the database.
+        commit (bool, optional): Whether to commit the changes before closing
+
+    Returns:
+        None
+    """
     if commit:
         conn.commit()
     conn.close()
@@ -67,7 +83,6 @@ def insert_data(cursor: sqlite3.Cursor, data_dict: dict[str, dict[str, str]]) ->
     Args:
         cursor (sqlite3.Cursor): Cursor object to execute SQL queries.
         data_dict (dict[str, dict[str, str]]): Dictionary containing data to be inserted.
-        park_name (str): Name of the park.
 
     Returns:
         None
@@ -94,12 +109,25 @@ def insert_data(cursor: sqlite3.Cursor, data_dict: dict[str, dict[str, str]]) ->
 # -------------------------------------------------------------------
 # Update data
 # -------------------------------------------------------------------
-def toggle_favorite(db_name, attraction_name, status):
+def toggle_favorite(db_name: str, attraction_name: str, status: bool) -> None:
+    """Update the favorite status of an attraction.
+
+    Args:
+         db_name (str): Name of the database file.
+         attraction_name (str): Name of the attraction.
+         status (bool): Favorite status (True for favorite, False otherwise).
+
+    Returns:
+         None
+    """
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute("""
+    cursor.execute(
+        """
         INSERT OR REPLACE INTO attractions_settings (attraction_name, is_favorite)
         VALUES (?, ?)
-    """, (attraction_name, 1 if status else 0))
+    """,
+        (attraction_name, 1 if status else 0),
+    )
     conn.commit()
     conn.close()

@@ -1,7 +1,6 @@
 # MIT License
 # Copyright (c) 2026 Romathi
 
-
 from datetime import datetime
 
 import requests
@@ -16,6 +15,12 @@ PARK_NAMES = {
 
 
 def collect():
+    """Extracts data from the ThemeParks API and returns a dictionary of attraction data.
+
+    Returns:
+        dict: A dictionary where keys are attraction names and values are dictionaries containing
+              the last update time, park name, queue status, and wait time.
+    """
     url = f"https://api.themeparks.wiki/v1/entity/{PARK_ID}/live"
     attraction_datas = {}
     try:
