@@ -24,7 +24,13 @@ st.set_page_config(page_title="Disney Analytics", layout="wide")
 
 def load_data():
     conn = sqlite3.connect(DB_NAME)
-    _df = pd.read_sql_query("SELECT * FROM wait_times", conn)
+    query = """
+            SELECT w.*,
+                   COALESCE(s.is_favorite, 0) as is_favorite
+            FROM wait_times w
+                     LEFT JOIN attractions_settings s ON w.attraction_name = s.attraction_name \
+            """
+    _df = pd.read_sql_query(query, conn)
     conn.close()
     _df["timestamp"] = pd.to_datetime(_df["timestamp"])
     _df["timestamp"] = _df["timestamp"].dt.tz_localize("UTC").dt.tz_convert("Europe/Paris")
@@ -40,10 +46,6 @@ try:
     # 2. Application des filtres de base (Parc, etc.)
     selected_park, filtered_df = get_filters(st, df)
 
-    # 3. Gestion des favoris (Checkboxes + Toggle)
-    # IMPORTANT : Ta fonction manage_favorites_ui doit utiliser la clé "show_only_favs"
-    # pour son st.sidebar.toggle(..., key="show_only_favs")
-    show_only = manage_favorites_ui(st, df, DB_NAME)
 
     # 4. Définition des attractions ouvertes MAINTENANT
     open_attractions = filtered_df[
@@ -51,6 +53,11 @@ try:
         & (filtered_df["wait_time"].notna())  # Pas de NULL
         & (filtered_df["wait_time"] > 0)  # Pas de 0 si tu considères que c'est une erreur
     ]
+
+    # 3. Gestion des favoris (Checkboxes + Toggle)
+    # IMPORTANT : Ta fonction manage_favorites_ui doit utiliser la clé "show_only_favs"
+    # pour son st.sidebar.toggle(..., key="show_only_favs")
+    show_only = manage_favorites_ui(st, open_attractions, DB_NAME)
 
     # 5. LE FILTRE FINAL (Correction de la logique)
     # On utilise directement show_only qui est renvoyé par ton composant

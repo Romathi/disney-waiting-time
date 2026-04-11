@@ -37,4 +37,4 @@ def get_graphs(st, df: pd.DataFrame) -> None:
     fig.update_traces(mode="lines+markers")
     fig.update_layout(hovermode="x unified")  # Affiche une barre verticale au survol
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")

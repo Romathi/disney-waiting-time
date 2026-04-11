@@ -14,7 +14,6 @@ DB_NAME = "disney_data.db"
 
 ## API Theme Parks
 PARK_ID = "e8d0207f-da8a-4048-bec8-117aa946b2c2"
-PARK_NAME = "Disneyland Paris"
 
 ## Refresh
 INTERVAL = 300  # 5 minutes

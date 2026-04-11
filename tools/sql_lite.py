@@ -95,11 +95,12 @@ def insert_data(cursor: sqlite3.Cursor, data_dict: dict[str, dict[str, str]]) ->
 # -------------------------------------------------------------------
 # Update data
 # -------------------------------------------------------------------
-def toggle_favorite(db_name: str, attraction_name: str, status: bool):
-    conn = get_db_connection(db_name)
+def toggle_favorite(db_name, attraction_name, status):
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute(
-        "UPDATE wait_times SET is_favorite = ? WHERE attraction_name = ?", (1 if status else 0, attraction_name)
-    )
+    cursor.execute("""
+        INSERT OR REPLACE INTO attractions_settings (attraction_name, is_favorite)
+        VALUES (?, ?)
+    """, (attraction_name, 1 if status else 0))
     conn.commit()
     conn.close()
