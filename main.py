@@ -20,7 +20,7 @@ PARK_NAME = "Disneyland Paris"
 INTERVAL = 300  # 5 minutes
 
 ## Mode
-TEST_MODE = True
+TEST_MODE = False
 
 
 def main():
